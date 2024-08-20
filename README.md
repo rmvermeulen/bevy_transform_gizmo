@@ -8,7 +8,7 @@ https://user-images.githubusercontent.com/2632925/227469248-726b21c8-5308-49f0-9
 
 [![crates.io](https://img.shields.io/crates/v/bevy_transform_gizmo)](https://crates.io/crates/bevy_transform_gizmo)
 [![docs.rs](https://docs.rs/bevy_transform_gizmo/badge.svg)](https://docs.rs/bevy_transform_gizmo)
-[![CI](https://github.com/ForesightMiningSoftwareCorporation/bevy_transform_gizmo/workflows/CI/badge.svg?branch=main)](https://github.com/ForesightMiningSoftwareCorporation/bevy_transform_gizmo/actions?query=workflow%3A%22CI%22+branch%3Amain)
+[![CI-CD](https://github.com/ForesightMiningSoftwareCorporation/bevy_transform_gizmo/actions/workflows/release.yml/badge.svg)](https://github.com/ForesightMiningSoftwareCorporation/bevy_transform_gizmo/actions/workflows/release.yml)
 [![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-main-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
     
 </div>
@@ -45,9 +45,3 @@ bevy_transform_gizmo is free and open source! All code in this repository is dua
 at your option. This means you can select the license you prefer! This dual-licensing approach is the de-facto standard in the Rust ecosystem and there are very good reasons to include both.
 
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions.
-
-## Sponsors
-The creation and maintenance of Bevy Transform Gizmo is sponsored by Foresight Mining Software Corporation.
-
-<img src="https://user-images.githubusercontent.com/2632925/151242316-db3455d1-4934-4374-8369-1818daf512dd.png" alt="Foresight Mining Software Corporation" width="480">
-

@@ -8,7 +8,7 @@ use bevy_mod_picking::{
     prelude::{PickingInteraction, PointerId},
     selection::{NoDeselect, PickSelection},
 };
-use bevy_mod_raycast::prelude::{Primitive3d, RaycastSystem};
+use bevy_mod_raycast::prelude::RaycastSystem;
 use gizmo_material::GizmoMaterial;
 use mesh::{RotationGizmo, ViewTranslateGizmo};
 use normalization::*;
@@ -277,18 +277,18 @@ fn drag_gizmo(
         }
         match interaction {
             TransformGizmoInteraction::TranslateAxis { original: _, axis } => {
-                let vertical_vector = picking_ray.direction().cross(axis).normalize();
+                let vertical_vector = picking_ray.direction.cross(axis).normalize();
                 let plane_normal = axis.cross(vertical_vector).normalize();
                 let plane_origin = gizmo_origin;
-                let cursor_plane_intersection = if let Some(intersection) = picking_camera
-                    .intersect_primitive(Primitive3d::Plane {
-                        normal: plane_normal,
-                        point: plane_origin,
-                    }) {
-                    intersection.position()
+                let cursor_plane_intersection = if let Some(intesect_point) = picking_camera
+                    .get_ray()
+                    .and_then(|ray| intersect_plane(ray, plane_normal, plane_origin))
+                {
+                    intesect_point
                 } else {
                     return;
                 };
+
                 let cursor_vector: Vec3 = cursor_plane_intersection - plane_origin;
                 let cursor_projected_onto_handle = match &gizmo.drag_start {
                     Some(drag_start) => *drag_start,
@@ -321,11 +321,10 @@ fn drag_gizmo(
             TransformGizmoInteraction::TranslatePlane { normal, .. } => {
                 let plane_origin = gizmo_origin;
                 let cursor_plane_intersection = if let Some(intersection) = picking_camera
-                    .intersect_primitive(Primitive3d::Plane {
-                        normal,
-                        point: plane_origin,
-                    }) {
-                    intersection.position()
+                    .get_ray()
+                    .and_then(|ray| intersect_plane(ray, normal, plane_origin))
+                {
+                    intersection
                 } else {
                     return;
                 };
@@ -351,14 +350,11 @@ fn drag_gizmo(
                 );
             }
             TransformGizmoInteraction::RotateAxis { original: _, axis } => {
-                let rotation_plane = Primitive3d::Plane {
-                    normal: axis.normalize(),
-                    point: gizmo_origin,
-                };
-                let cursor_plane_intersection = if let Some(intersection) =
-                    picking_camera.intersect_primitive(rotation_plane)
+                let cursor_plane_intersection = if let Some(intersection) = picking_camera
+                    .get_ray()
+                    .and_then(|ray| intersect_plane(ray, axis.normalize(), gizmo_origin))
                 {
-                    intersection.position()
+                    intersection
                 } else {
                     return;
                 };
@@ -398,6 +394,19 @@ fn drag_gizmo(
     }
 }
 
+fn intersect_plane(ray: Ray3d, plane_normal: Vec3, plane_origin: Vec3) -> Option<Vec3> {
+    // assuming vectors are all normalized
+    let denominator = ray.direction.dot(plane_normal);
+    if denominator.abs() > f32::EPSILON {
+        let point_to_point = plane_origin - ray.origin;
+        let intersect_dist = plane_normal.dot(point_to_point) / denominator;
+        let intersect_position = ray.direction * intersect_dist + ray.origin;
+        Some(intersect_position)
+    } else {
+        None
+    }
+}
+
 fn hover_gizmo(
     gizmo_raycast_source: Query<(Entity, &GizmoPickSource)>,
     mut gizmo_query: Query<(
@@ -411,9 +420,10 @@ fn hover_gizmo(
     mut hits: EventWriter<PointerHits>,
 ) {
     for (gizmo_entity, children, mut gizmo, mut interaction, _transform) in gizmo_query.iter_mut() {
-        let (camera, gizmo_raycast_source) = gizmo_raycast_source
-            .get_single()
-            .expect("Missing gizmo raycast source");
+        let Ok((camera, gizmo_raycast_source)) = gizmo_raycast_source.get_single() else {
+            warn!("There must be exactly one gizmo raycast source");
+            return;
+        };
 
         if let Some((topmost_gizmo_entity, _)) = gizmo_raycast_source.get_nearest_intersection() {
             // Only update the gizmo state if it isn't being clicked (dragged) currently.
@@ -456,7 +466,7 @@ pub struct RotationOriginOffset(pub Vec3);
 #[allow(clippy::type_complexity, clippy::too_many_arguments)]
 fn grab_gizmo(
     mut commands: Commands,
-    mouse_button_input: Res<Input<MouseButton>>,
+    mouse_button_input: Res<ButtonInput<MouseButton>>,
     mut gizmo_events: EventWriter<TransformGizmoEvent>,
     mut gizmo_query: Query<(
         &mut TransformGizmo,
@@ -647,12 +657,12 @@ fn adjust_view_translate_gizmo(
     let direction = cam_transform.local_z();
     *interaction = TransformGizmoInteraction::TranslatePlane {
         original: Vec3::ZERO,
-        normal: direction,
+        normal: *direction,
     };
     let rotation = Quat::from_mat3(&Mat3::from_cols(
-        direction.cross(cam_transform.local_y()),
-        direction,
-        cam_transform.local_y(),
+        direction.cross(*cam_transform.local_y()),
+        *direction,
+        *cam_transform.local_y(),
     ));
     *global_transform = Transform {
         rotation,
