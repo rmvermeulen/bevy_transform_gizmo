@@ -13,7 +13,6 @@ fn main() {
                 }),
                 ..default()
             }),
-            MeshPickingPlugin,
             TransformGizmoPlugin::default(),
         ))
         .add_systems(Startup, setup)

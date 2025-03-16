@@ -97,7 +97,10 @@ impl Plugin for TransformGizmoPlugin {
         };
         
         app.insert_resource(resource);
+        
+        app.add_plugins(MeshPickingPlugin);
         app.add_plugins(MaterialPlugin::<GizmoMaterial>::default());
+
         app.add_systems(PostStartup, build_gizmo);
         app.add_systems(Update, transform_gizmo_picking);
         app.add_systems(PostUpdate,normalize);
