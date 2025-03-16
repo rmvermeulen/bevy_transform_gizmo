@@ -1,3 +1,9 @@
+
+## Fork for Bevy 0.15 using the Bevy Picking
+> This fork is a very rough update of the plugin to be compatible with Bevy 0.15 and the new [Bevy Picking](https://docs.rs/bevy/latest/bevy/picking/index.html) 
+It is more or less a Tech Demo.
+
+
 <div align="center">
     
 # Bevy Transform Gizmo
@@ -5,13 +11,10 @@
 
 **Simple 3D transform gizmo for bevy**
 
-https://user-images.githubusercontent.com/2632925/227469248-726b21c8-5308-49f0-9b04-e567833774e1.mp4
+https://github.com/user-attachments/assets/4fec4e20-9068-4821-a967-72d07562777d
+
 
 </div>
-
-## Fork for Bevy 0.15 using the Bevy Picking
-> This fork is a very rough update of the plugin to be compatible with Bevy 0.15 and the new [Bevy Picking](https://docs.rs/bevy/latest/bevy/picking/index.html) 
-It is more or less a Tech Demo.
 
 
 # Demo
