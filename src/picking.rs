@@ -2,14 +2,15 @@
 use bevy::{
     prelude::*,
     color::palettes::tailwind::*,
+    picking::*
 };
 
-use crate::transform_gizmo::*;
+use crate::*;
 
 pub fn transform_gizmo_picking(
     mut ray_cast: MeshRayCast, 
     windows: Single<&Window>,
-    q_camera: Single<(Entity, &Camera)>,
+    q_camera: Single<(Entity, &Camera), With <GizmoPickSource>>,
     q_transform: Query<&GlobalTransform>,  
     mouse_input: Res<ButtonInput<MouseButton>>,
     mut materials_3d: Query<&mut MeshMaterial3d<StandardMaterial>>,

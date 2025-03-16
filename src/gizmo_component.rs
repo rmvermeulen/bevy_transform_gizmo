@@ -11,9 +11,10 @@ use bevy::{
 };
 use bevy::asset::load_internal_asset;
 
-use crate::transform_gizmo::*;
-use crate::transform_gizmo::mesh::*;
-use crate::transform_gizmo::normalization::*;
+use crate::*;
+use crate::mesh::*;
+use crate::normalization::*;
+
 
 /// Startup system that builds the procedural mesh and materials of the gizmo.
 pub fn build_gizmo(

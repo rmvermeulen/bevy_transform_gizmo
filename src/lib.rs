@@ -16,10 +16,11 @@ use transformations::*;
 
 pub mod  gizmo_component;
 use gizmo_component::*;
-use crate::transform_gizmo::gizmo_material::GizmoMaterial;
+use crate::gizmo_material::GizmoMaterial;
 
 pub mod normalization;
-use crate::transform_gizmo::normalization::*;
+use crate::normalization::*;
+
 
 #[derive(Component)]
 pub struct TransformGizmo;

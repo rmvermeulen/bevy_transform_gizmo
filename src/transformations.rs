@@ -2,9 +2,10 @@
 use bevy::{
     prelude::*,
     color::palettes::tailwind::*,
+    picking::*
 };
 
-use crate::transform_gizmo::*;
+use crate::*;
 
 /// This Observer Function allows to move in the forward/Back direction of the dragged Entity  
 pub fn transform_axis(
@@ -13,8 +14,7 @@ pub fn transform_axis(
     q_transform: Query<&mut GlobalTransform>,  
     mut q_local_transform: Query<&mut Transform>,  
     windows: Single<&Window>,
-    q_camera: Single<(Entity, &Camera)>,
-    mut gizmos: Gizmos,
+    q_camera: Single<(Entity, &Camera), With <GizmoPickSource>>,
     mut selection: ResMut<TransformGizmoRessource>,   
 ) {
     // Check if the correct Mouse Button is pressed
@@ -90,8 +90,7 @@ pub fn transform_plane(
     q_transform: Query<&mut GlobalTransform>,  
     mut q_local_transform: Query<&mut Transform>,  
     windows: Single<&Window>,
-    q_camera: Single<(Entity, &Camera)>,
-    mut gizmos: Gizmos,
+    q_camera: Single<(Entity, &Camera), With <GizmoPickSource>>,
     mut selection: ResMut<TransformGizmoRessource>,   
 ) {
     // Check if the correct Mouse Button is pressed
@@ -171,8 +170,7 @@ pub fn transform_camera_plane(
     q_transform: Query<&mut GlobalTransform>,  
     mut q_local_transform: Query<&mut Transform>,  
     windows: Single<&Window>,
-    q_camera: Single<(Entity, &Camera)>,
-    mut gizmos: Gizmos,
+    q_camera: Single<(Entity, &Camera), With <GizmoPickSource>>,
     mut selection: ResMut<TransformGizmoRessource>,   
 ) {
     // Check if the correct Mouse Button is pressed
@@ -252,8 +250,7 @@ pub fn transform_rotation(
     q_transform: Query<&mut GlobalTransform>,  
     mut q_local_transform: Query<&mut Transform>,  
     windows: Single<&Window>,
-    q_camera: Single<(Entity, &Camera)>,
-    mut gizmos: Gizmos,   
+    q_camera: Single<(Entity, &Camera), With <GizmoPickSource>>,
     mut selection: ResMut<TransformGizmoRessource>,
 ) {
     // Check if the correct Mouse Button is pressed

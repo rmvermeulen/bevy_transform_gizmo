@@ -18,6 +18,8 @@ bevy = { version = "~0.15", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_pbr",
+    "bevy_picking",
+    "bevy_mesh_picking_backend"
 ] }
 
 [dev-dependencies]
@@ -28,4 +30,6 @@ bevy = { version = "~0.15", default-features = false, features = [
     "tonemapping_luts",
     "ktx2",
     "zstd",
+     "bevy_picking",
+     "bevy_mesh_picking_backend"
 ] }

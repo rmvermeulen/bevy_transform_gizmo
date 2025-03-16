@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::transform_gizmo::*;
+use crate::*;
 
 /// Marker struct that marks entities with meshes that should be scaled relative to the camera.
 #[derive(Component)]
@@ -51,3 +51,5 @@ pub fn normalize(
         transform.scale = gt.scale * Vec3::splat(required_scale);
     }    
 }
+
+
