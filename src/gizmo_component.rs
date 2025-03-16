@@ -62,7 +62,7 @@ pub fn build_gizmo(
         TransformGizmo,
         Normalize3d{
             size_in_world: 1.5,
-            desired_pixel_size : 100.0
+            desired_pixel_size : 150.0
         },
         )).id();
     
