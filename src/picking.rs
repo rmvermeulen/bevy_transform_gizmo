@@ -2,7 +2,8 @@
 use bevy::{
     prelude::*,
     color::palettes::tailwind::*,
-    picking::*
+    picking::*,
+    window::*
 };
 
 use crate::*;
