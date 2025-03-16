@@ -58,6 +58,7 @@ pub fn build_gizmo(
     let parent = commands.spawn((
         Transform::from_xyz(0.0, 0.0, 0.0),
         Visibility::default(),
+        RenderLayers::layer(12),
         TransformGizmo,
         Normalize3d{
             size_in_world: 1.5,
@@ -78,6 +79,7 @@ pub fn build_gizmo(
             )),
             ..Default::default()
         },
+        RenderLayers::layer(12),
         NotShadowCaster,
 TransformGizmoPart,
     )).id();
@@ -97,6 +99,7 @@ TransformGizmoPart,
         },
         NotShadowCaster,
         TransformGizmoPart,
+        RenderLayers::layer(12),
     )).id();
 
     commands.entity(parent).add_children(&[translation_y_axis]);
@@ -114,6 +117,7 @@ TransformGizmoPart,
         },
         NotShadowCaster,
         TransformGizmoPart,
+        RenderLayers::layer(12),
     )).id();
 
     commands.entity(parent).add_children(&[translation_z_axis]);
@@ -132,6 +136,7 @@ TransformGizmoPart,
         },
         NotShadowCaster,
         TransformGizmoPart,
+        RenderLayers::layer(12),
     )).id();
 
     commands.entity(parent).add_children(&[translation_x_handle]);
@@ -149,6 +154,7 @@ TransformGizmoPart,
         },
         NotShadowCaster,
         TransformGizmoPart,
+        RenderLayers::layer(12),
     )).id();
 
     commands.entity(parent).add_children(&[translation_x_plane]);
@@ -164,6 +170,7 @@ TransformGizmoPart,
         },
         NotShadowCaster,
         TransformGizmoPart,
+        RenderLayers::layer(12),
        
     )).id();
 
@@ -184,6 +191,7 @@ TransformGizmoPart,
         },
         NotShadowCaster,
         TransformGizmoPart,
+        RenderLayers::layer(12),
     )).id();
 
     commands.entity(parent).add_children(&[translation_y_plane]);
@@ -201,6 +209,7 @@ TransformGizmoPart,
         },
         NotShadowCaster,
         TransformGizmoPart,
+        RenderLayers::layer(12),
     )).id();
 
     commands.entity(parent).add_children(&[translation_z_handle]);
@@ -218,6 +227,7 @@ TransformGizmoPart,
         },
         NotShadowCaster,
         TransformGizmoPart,
+        RenderLayers::layer(12),
     )).id();
 
     commands.entity(parent).add_children(&[translation_z_plane]);
@@ -231,6 +241,7 @@ TransformGizmoPart,
         },
         NotShadowCaster,
         TransformGizmoPart,
+        RenderLayers::layer(12),
     )).id();
 
     commands.entity(parent).add_children(&[handle]);
@@ -250,6 +261,7 @@ TransformGizmoPart,
         },
         NotShadowCaster,
         TransformGizmoPart,
+        RenderLayers::layer(12),
     )).id();
 
     commands.entity(parent).add_children(&[rotation_x_arc]);
@@ -264,6 +276,7 @@ TransformGizmoPart,
         },
         NotShadowCaster,
         TransformGizmoPart,
+        RenderLayers::layer(12),
     )).id();
 
     commands.entity(parent).add_children(&[rotation_y_arc]);
@@ -281,9 +294,26 @@ TransformGizmoPart,
         },
         NotShadowCaster,
         TransformGizmoPart,
+        RenderLayers::layer(12),
     )).id();
 
     commands.entity(parent).add_children(&[rotation_z_arc]);
     commands.entity(rotation_z_arc).observe(transform_rotation);
+
+    commands.spawn((
+        Camera3dBundle {
+            camera_3d: Camera3d {
+                depth_load_op: Camera3dDepthLoadOp::Clear(0.),
+                ..default()
+            },
+            camera: Camera {
+                clear_color: ClearColorConfig::None,
+                ..default()
+            },
+            ..Default::default()
+        },
+        InternalGizmoCamera,
+        RenderLayers::layer(12),
+    ));
         
 }

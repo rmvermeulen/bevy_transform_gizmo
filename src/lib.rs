@@ -21,6 +21,9 @@ use crate::gizmo_material::GizmoMaterial;
 pub mod normalization;
 use crate::normalization::*;
 
+#[derive(Component, Default, Clone, Debug)]
+pub struct InternalGizmoCamera;
+
 
 #[derive(Component)]
 pub struct TransformGizmo;
@@ -71,7 +74,7 @@ impl Default for TransformGizmoPlugin {
         Self {
             use_tag_filter: false,
             selection_color: Color::from(YELLOW_300).clone(),
-            selection_button: MouseButton::Right,
+            selection_button: MouseButton::Left,
             drag_button: PointerButton::Primary,
         }
     }
@@ -92,13 +95,40 @@ impl Plugin for TransformGizmoPlugin {
             selection_button: self.selection_button,
             ..Default::default()
         };
-
+        
         app.insert_resource(resource);
         app.add_plugins(MaterialPlugin::<GizmoMaterial>::default());
         app.add_systems(PostStartup, build_gizmo);
         app.add_systems(Update, transform_gizmo_picking);
         app.add_systems(PostUpdate,normalize);
+        app.add_systems(PostUpdate,gizmo_cam_copy_settings);
 
     }
 }
 
+
+fn gizmo_cam_copy_settings(
+    main_cam: Query<(Ref<Camera>, Ref<GlobalTransform>, Ref<Projection>), With<GizmoPickSource>>,
+    mut gizmo_cam: Query<
+        (&mut Camera, &mut GlobalTransform, &mut Projection),
+        (With<InternalGizmoCamera>, Without<GizmoPickSource>),
+    >,
+) {
+    let (main_cam, main_cam_pos, main_proj) = if let Ok(x) = main_cam.get_single() {
+        x
+    } else {
+        error!("No `GizmoPickSource` found! Insert the `GizmoPickSource` component onto your primary 3d camera");
+        return;
+    };
+    let (mut gizmo_cam, mut gizmo_cam_pos, mut proj) = gizmo_cam.single_mut();
+    if main_cam_pos.is_changed() {
+        *gizmo_cam_pos = *main_cam_pos;
+    }
+    if main_cam.is_changed() {
+        *gizmo_cam = main_cam.clone();
+        gizmo_cam.order += 10;
+    }
+    if main_proj.is_changed() {
+        *proj = main_proj.clone();
+    }
+}
