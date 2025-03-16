@@ -63,10 +63,10 @@ impl Default for TransformGizmoRessource {
 }
 
 pub struct TransformGizmoPlugin{
-    use_tag_filter: bool,
-    selection_color: Color,
-    selection_button: MouseButton,
-    drag_button: PointerButton,
+    pub use_tag_filter: bool,
+    pub selection_color: Color,
+    pub selection_button: MouseButton,
+    pub drag_button: PointerButton,
 }
 
 impl Default for TransformGizmoPlugin {
