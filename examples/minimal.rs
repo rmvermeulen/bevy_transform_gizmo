@@ -29,7 +29,7 @@ fn setup(
     commands.spawn((
             Mesh3d(meshes.add(Plane3d::default().mesh().size(10.0, 10.0))),
             MeshMaterial3d(materials.add(Color::srgb(0.3, 0.5, 0.3))),
-            GizmoTransformable,
+       //     GizmoTransformable,
         ));
     // cube
     commands.spawn((
