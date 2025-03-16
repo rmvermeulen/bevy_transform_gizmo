@@ -1,17 +1,21 @@
+
+## Fork for Bevy 0.15 using the Bevy Picking
+> This fork is a very rough update of the plugin to be compatible with Bevy 0.15 and the new [Bevy Picking](https://docs.rs/bevy/latest/bevy/picking/index.html) 
+It is more or less a Tech Demo.
+
+
 <div align="center">
     
 # Bevy Transform Gizmo
 
+
 **Simple 3D transform gizmo for bevy**
 
-https://user-images.githubusercontent.com/2632925/227469248-726b21c8-5308-49f0-9b04-e567833774e1.mp4
+https://github.com/user-attachments/assets/4fec4e20-9068-4821-a967-72d07562777d
 
-[![crates.io](https://img.shields.io/crates/v/bevy_transform_gizmo)](https://crates.io/crates/bevy_transform_gizmo)
-[![docs.rs](https://docs.rs/bevy_transform_gizmo/badge.svg)](https://docs.rs/bevy_transform_gizmo)
-[![CI-CD](https://github.com/ForesightMiningSoftwareCorporation/bevy_transform_gizmo/actions/workflows/release.yml/badge.svg)](https://github.com/ForesightMiningSoftwareCorporation/bevy_transform_gizmo/actions/workflows/release.yml)
-[![Bevy tracking](https://img.shields.io/badge/Bevy%20tracking-main-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
-    
+
 </div>
+
 
 # Demo
 
@@ -28,10 +32,9 @@ cargo run --example minimal
 * Rotation handles
 * Gizmo always renders on top of the main render pass
 * Gizmo is always the same size at it moves closer/further from the camera
+* **New in this Fork:** Gizmo rotates with the Object
 
 # Usage
-
-This plugin is built on and relies on [`bevy_mod_picking`](https://github.com/aevyrie/bevy_mod_picking) for 3d mouse interaction with the scene.
 
 See the [minimal](examples/minimal.rs) demo for an example of a minimal implementation.
 
