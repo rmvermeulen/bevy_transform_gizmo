@@ -1,4 +1,5 @@
 use bevy::{
+    asset::weak_handle,
     pbr::{MaterialPipeline, MaterialPipelineKey},
     prelude::*,
     reflect::TypePath,
@@ -10,9 +11,10 @@ use bevy::{
     },
 };
 
-pub const GIZMO_SHADER_HANDLE: Handle<Shader> = Handle::weak_from_u128(13953800272683943019);
+pub const GIZMO_SHADER_HANDLE: Handle<Shader> =
+    weak_handle!("1a3a9469-c2d6-45b3-a0b6-5b1b03fb75fe");
 
-#[derive(Asset, TypePath, AsBindGroup, Debug, Clone)]
+#[derive(AsBindGroup, Asset, Clone, Debug, TypePath)]
 pub struct GizmoMaterial {
     #[uniform(0)]
     pub color: LinearRgba,

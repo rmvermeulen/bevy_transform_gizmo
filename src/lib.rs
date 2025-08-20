@@ -2,6 +2,7 @@ use bevy::asset::load_internal_asset;
 use bevy::{color::palettes::tailwind::*, prelude::*};
 
 pub mod mesh;
+use bevy_log::error;
 use mesh::*;
 
 pub mod picking;
@@ -111,18 +112,18 @@ impl Plugin for TransformGizmoPlugin {
 #[allow(clippy::type_complexity)]
 fn gizmo_cam_copy_settings(
     main_cam: Query<(Ref<Camera>, Ref<GlobalTransform>, Ref<Projection>), With<GizmoPickSource>>,
-    mut gizmo_cam: Query<
+    gizmo_cam: Single<
         (&mut Camera, &mut GlobalTransform, &mut Projection),
         (With<InternalGizmoCamera>, Without<GizmoPickSource>),
     >,
 ) {
-    let (main_cam, main_cam_pos, main_proj) = if let Ok(x) = main_cam.get_single() {
+    let (main_cam, main_cam_pos, main_proj) = if let Ok(x) = main_cam.single() {
         x
     } else {
         error!("No `GizmoPickSource` found! Insert the `GizmoPickSource` component onto your primary 3d camera");
         return;
     };
-    let (mut gizmo_cam, mut gizmo_cam_pos, mut proj) = gizmo_cam.single_mut();
+    let (mut gizmo_cam, mut gizmo_cam_pos, mut proj) = gizmo_cam.into_inner();
     if main_cam_pos.is_changed() {
         *gizmo_cam_pos = *main_cam_pos;
     }

@@ -32,7 +32,7 @@ pub fn transform_gizmo_picking_2(
     // Ignore the visibility of entities. This allows ray casting hidden entities.
     let visibility = RayCastVisibility::Any;
 
-    let mut settings = RayCastSettings::default()
+    let mut settings = MeshRayCastSettings::default()
         .with_filter(&filter_gizmo_parts)
         .with_early_exit_test(&early_exit_test)
         .with_visibility(visibility);
