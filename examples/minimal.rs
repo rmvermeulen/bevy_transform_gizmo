@@ -1,6 +1,6 @@
 use bevy::{prelude::*, window::PresentMode};
-use bevy_transform_gizmo::TransformGizmoPlugin;
 use bevy_transform_gizmo::GizmoTransformable;
+use bevy_transform_gizmo::TransformGizmoPlugin;
 
 fn main() {
     App::new()
@@ -27,10 +27,10 @@ fn setup(
 ) {
     // plane
     commands.spawn((
-            Mesh3d(meshes.add(Plane3d::default().mesh().size(10.0, 10.0))),
-            MeshMaterial3d(materials.add(Color::srgb(0.3, 0.5, 0.3))),
-       //     GizmoTransformable,
-        ));
+        Mesh3d(meshes.add(Plane3d::default().mesh().size(10.0, 10.0))),
+        MeshMaterial3d(materials.add(Color::srgb(0.3, 0.5, 0.3))),
+        //     GizmoTransformable,
+    ));
     // cube
     commands.spawn((
         Mesh3d(meshes.add(Cuboid::from_size(Vec3::splat(1.0)))),

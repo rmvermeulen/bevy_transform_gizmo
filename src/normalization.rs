@@ -11,20 +11,17 @@ pub struct Normalize3d {
     pub desired_pixel_size: f32,
 }
 
-
 // This Function Scales the Gizmo always to the correct Size
 #[allow(clippy::type_complexity)]
 pub fn normalize(
-    mut q_camera: Single<(Entity, &Camera), With<GizmoPickSource>>,
-    mut q_transform: Query<(Entity, &mut Transform, &Normalize3d),(With <Normalize3d>)>,
+    q_camera: Single<(Entity, &Camera), With<GizmoPickSource>>,
+    mut q_transform: Query<(Entity, &mut Transform, &Normalize3d), With<Normalize3d>>,
     q_global_transform: Query<&GlobalTransform>,
-){  
-   
+) {
     for (entity, mut transform, normalize) in q_transform.iter_mut() {
-
         let (camera_entity, camera) = *q_camera;
 
-        let camera_transform =  q_global_transform.get(camera_entity).unwrap();
+        let camera_transform = q_global_transform.get(camera_entity).unwrap();
         let view = camera_transform.compute_matrix().inverse();
 
         let global_transform = q_global_transform.get(entity).unwrap();
@@ -35,21 +32,18 @@ pub fn normalize(
         let Ok(pixel_root) = camera.world_to_viewport(
             &GlobalTransform::default(),
             Vec3::new(normalize.size_in_world * gt.scale.x, 0.0, distance),
-        )else {
+        ) else {
             continue;
         };
 
-        let Ok(pixel_end) = camera.world_to_viewport(
-            &GlobalTransform::default(),
-            Vec3::new(0.0, 0.0, distance),
-        )else {
+        let Ok(pixel_end) =
+            camera.world_to_viewport(&GlobalTransform::default(), Vec3::new(0.0, 0.0, distance))
+        else {
             continue;
         };
 
         let actual_pixel_size = pixel_root.distance(pixel_end);
         let required_scale = normalize.desired_pixel_size / actual_pixel_size;
         transform.scale = gt.scale * Vec3::splat(required_scale);
-    }    
+    }
 }
-
-

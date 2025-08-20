@@ -1,21 +1,16 @@
-
-use bevy::{
-    prelude::*,
-    color::palettes::tailwind::*,
-    picking::*
-};
+use bevy::prelude::*;
 
 use crate::*;
 
 /// This Observer Function allows to move in the forward/Back direction of the dragged Entity  
 pub fn transform_axis(
-    drag: Trigger<Pointer<Drag>>, 
+    drag: Trigger<Pointer<Drag>>,
     q_parents: Query<&Parent>,
-    q_transform: Query<&mut GlobalTransform>,  
-    mut q_local_transform: Query<&mut Transform>,  
+    q_transform: Query<&mut GlobalTransform>,
+    mut q_local_transform: Query<&mut Transform>,
     windows: Single<&Window>,
-    q_camera: Single<(Entity, &Camera), With <GizmoPickSource>>,
-    mut selection: ResMut<TransformGizmoRessource>,   
+    q_camera: Single<(Entity, &Camera), With<GizmoPickSource>>,
+    selection: Res<TransformGizmoRessource>,
 ) {
     // Check if the correct Mouse Button is pressed
     if drag.button != selection.drag_button {
@@ -24,14 +19,14 @@ pub fn transform_axis(
     let (camera_entity, camera) = *q_camera;
 
     let handle_entity = drag.entity();
-    
+
     let parent_entity = q_parents.get(handle_entity).unwrap().get();
-    
+
     let gismo_transform = q_transform.get(handle_entity).unwrap();
 
     let parent_transform = q_transform.get(parent_entity).unwrap();
 
-    let camera_transform =  q_transform.get(camera_entity).unwrap();
+    let camera_transform = q_transform.get(camera_entity).unwrap();
 
     let direction = gismo_transform.up();
     let direction_plane = gismo_transform.forward();
@@ -46,29 +41,32 @@ pub fn transform_axis(
     };
 
     // Calculate if and where the ray is hitting the Handle  plane.
-    let Some(distance) =
-        ray.intersect_plane(gismo_transform.translation(), InfinitePlane3d::new(direction_plane))
-    else {
+    let Some(distance) = ray.intersect_plane(
+        gismo_transform.translation(),
+        InfinitePlane3d::new(direction_plane),
+    ) else {
         return;
     };
-    
+
     let point = ray.get_point(distance);
 
     // Get the Point before the Drag
-    let Ok(ray_delta) = camera.viewport_to_world(camera_transform, cursor_position - drag.delta) else {
+    let Ok(ray_delta) = camera.viewport_to_world(camera_transform, cursor_position - drag.delta)
+    else {
         return;
     };
 
     // Calculate if and where the ray is hitting the Handle  plane.
-    let Some(distance_delta) =
-    ray_delta.intersect_plane(gismo_transform.translation(), InfinitePlane3d::new(direction_plane))
-    else {
+    let Some(distance_delta) = ray_delta.intersect_plane(
+        gismo_transform.translation(),
+        InfinitePlane3d::new(direction_plane),
+    ) else {
         return;
     };
     let point_delta = ray_delta.get_point(distance_delta);
-    
+
     // Calculate the drag in the correct direction
-    let delta_vector = point-point_delta;
+    let delta_vector = point - point_delta;
     // Calculate the Effect of the mouse movement in the direction of the Handle
     let result = delta_vector.project_onto(*direction);
 
@@ -85,13 +83,13 @@ pub fn transform_axis(
 
 /// This Observer Function allows to move in the two directions on the Plane created from Forward and Right of the dragged Entity  
 pub fn transform_plane(
-    drag: Trigger<Pointer<Drag>>, 
+    drag: Trigger<Pointer<Drag>>,
     q_parents: Query<&Parent>,
-    q_transform: Query<&mut GlobalTransform>,  
-    mut q_local_transform: Query<&mut Transform>,  
+    q_transform: Query<&mut GlobalTransform>,
+    mut q_local_transform: Query<&mut Transform>,
     windows: Single<&Window>,
-    q_camera: Single<(Entity, &Camera), With <GizmoPickSource>>,
-    mut selection: ResMut<TransformGizmoRessource>,   
+    q_camera: Single<(Entity, &Camera), With<GizmoPickSource>>,
+    selection: Res<TransformGizmoRessource>,
 ) {
     // Check if the correct Mouse Button is pressed
     if drag.button != selection.drag_button {
@@ -101,16 +99,15 @@ pub fn transform_plane(
     let (camera_entity, camera) = *q_camera;
 
     let handle_entity = drag.entity();
-    
+
     let parent_entity = q_parents.get(handle_entity).unwrap().get();
-    
+
     let gismo_transform = q_transform.get(handle_entity).unwrap();
 
     let parent_transform = q_transform.get(parent_entity).unwrap();
 
-    let camera_transform =  q_transform.get(camera_entity).unwrap();
+    let camera_transform = q_transform.get(camera_entity).unwrap();
 
-    
     let axis_1 = Vec3::from(gismo_transform.forward());
     let axis_2 = Vec3::from(gismo_transform.right());
 
@@ -126,32 +123,35 @@ pub fn transform_plane(
     };
 
     // Calculate if and where the ray is hitting the Handle  plane.
-    let Some(distance) =
-        ray.intersect_plane(gismo_transform.translation(), InfinitePlane3d::new(direction_plane))
-    else {
+    let Some(distance) = ray.intersect_plane(
+        gismo_transform.translation(),
+        InfinitePlane3d::new(direction_plane),
+    ) else {
         return;
     };
-    
+
     let point = ray.get_point(distance);
 
     // Get the Point before the Drag
-    let Ok(ray_delta) = camera.viewport_to_world(camera_transform, cursor_position - drag.delta) else {
+    let Ok(ray_delta) = camera.viewport_to_world(camera_transform, cursor_position - drag.delta)
+    else {
         return;
     };
 
     // Calculate if and where the ray is hitting the Handle  plane.
-    let Some(distance_delta) =
-    ray_delta.intersect_plane(gismo_transform.translation(), InfinitePlane3d::new(direction_plane))
-    else {
+    let Some(distance_delta) = ray_delta.intersect_plane(
+        gismo_transform.translation(),
+        InfinitePlane3d::new(direction_plane),
+    ) else {
         return;
     };
     let point_delta = ray_delta.get_point(distance_delta);
-    
+
     // Calculate the drag in the correct direction
-    let delta_vector = point-point_delta;
+    let delta_vector = point - point_delta;
     // Calculate the Effect of the mouse movement in the direction of the Handle
     let result = delta_vector.project_onto(axis_1) + delta_vector.project_onto(axis_2);
-    
+
     // Set the transforamtion
     let mut parent_transform_local = q_local_transform.get_mut(parent_entity).unwrap();
     parent_transform_local.translation += result;
@@ -163,15 +163,15 @@ pub fn transform_plane(
     }
 }
 
-/// This Observer Function allows to move in the two directions on the Plane created from the Camera View of the dragged Entity 
+/// This Observer Function allows to move in the two directions on the Plane created from the Camera View of the dragged Entity
 pub fn transform_camera_plane(
-    drag: Trigger<Pointer<Drag>>, 
+    drag: Trigger<Pointer<Drag>>,
     q_parents: Query<&Parent>,
-    q_transform: Query<&mut GlobalTransform>,  
-    mut q_local_transform: Query<&mut Transform>,  
+    q_transform: Query<&mut GlobalTransform>,
+    mut q_local_transform: Query<&mut Transform>,
     windows: Single<&Window>,
-    q_camera: Single<(Entity, &Camera), With <GizmoPickSource>>,
-    mut selection: ResMut<TransformGizmoRessource>,   
+    q_camera: Single<(Entity, &Camera), With<GizmoPickSource>>,
+    selection: Res<TransformGizmoRessource>,
 ) {
     // Check if the correct Mouse Button is pressed
     if drag.button != selection.drag_button {
@@ -180,14 +180,14 @@ pub fn transform_camera_plane(
     let (camera_entity, camera) = *q_camera;
 
     let handle_entity = drag.entity();
-    
+
     let parent_entity = q_parents.get(handle_entity).unwrap().get();
-    
+
     let gismo_transform = q_transform.get(handle_entity).unwrap();
 
     let parent_transform = q_transform.get(parent_entity).unwrap();
 
-    let camera_transform =  q_transform.get(camera_entity).unwrap();
+    let camera_transform = q_transform.get(camera_entity).unwrap();
 
     let Some(cursor_position) = windows.cursor_position() else {
         return;
@@ -200,37 +200,40 @@ pub fn transform_camera_plane(
 
     let direction_plane = camera_transform.back();
     // Calculate if and where the ray is hitting the Handle  plane.
-    let Some(distance) =
-        ray.intersect_plane(gismo_transform.translation(), InfinitePlane3d::new(direction_plane))
-    else {
+    let Some(distance) = ray.intersect_plane(
+        gismo_transform.translation(),
+        InfinitePlane3d::new(direction_plane),
+    ) else {
         return;
     };
-    
+
     let point = ray.get_point(distance);
 
     // Get the Point before the Drag
-    let Ok(ray_delta) = camera.viewport_to_world(camera_transform, cursor_position - drag.delta) else {
+    let Ok(ray_delta) = camera.viewport_to_world(camera_transform, cursor_position - drag.delta)
+    else {
         return;
     };
 
     // Calculate if and where the ray is hitting the Handle  plane.
-    let Some(distance_delta) =
-    ray_delta.intersect_plane(gismo_transform.translation(), InfinitePlane3d::new(direction_plane))
-    else {
+    let Some(distance_delta) = ray_delta.intersect_plane(
+        gismo_transform.translation(),
+        InfinitePlane3d::new(direction_plane),
+    ) else {
         return;
     };
     let point_delta = ray_delta.get_point(distance_delta);
-    
+
     // Calculate the drag in the correct direction
 
-    let delta_vector = point-point_delta;
-    
+    let delta_vector = point - point_delta;
+
     let axis_1 = Vec3::from(camera_transform.up());
     let axis_2 = Vec3::from(camera_transform.right());
-    
+
     // Calculate the Effect of the mouse movement in the direction of the Handle
     let result = delta_vector.project_onto(axis_1) + delta_vector.project_onto(axis_2);
-    
+
     // Set the transforamtion
     let mut parent_transform_local = q_local_transform.get_mut(parent_entity).unwrap();
     parent_transform_local.translation += result;
@@ -242,16 +245,15 @@ pub fn transform_camera_plane(
     }
 }
 
-
-/// This Observer Function allows to rotate the dragged Entity 
+/// This Observer Function allows to rotate the dragged Entity
 pub fn transform_rotation(
-    drag: Trigger<Pointer<Drag>>, 
+    drag: Trigger<Pointer<Drag>>,
     q_parents: Query<&Parent>,
-    q_transform: Query<&mut GlobalTransform>,  
-    mut q_local_transform: Query<&mut Transform>,  
+    q_transform: Query<&mut GlobalTransform>,
+    mut q_local_transform: Query<&mut Transform>,
     windows: Single<&Window>,
-    q_camera: Single<(Entity, &Camera), With <GizmoPickSource>>,
-    mut selection: ResMut<TransformGizmoRessource>,
+    q_camera: Single<(Entity, &Camera), With<GizmoPickSource>>,
+    selection: Res<TransformGizmoRessource>,
 ) {
     // Check if the correct Mouse Button is pressed
     if drag.button != selection.drag_button {
@@ -261,16 +263,15 @@ pub fn transform_rotation(
     let (camera_entity, camera) = *q_camera;
 
     let handle_entity = drag.entity();
-    
+
     let parent_entity = q_parents.get(handle_entity).unwrap().get();
-    
+
     let gismo_transform = q_transform.get(handle_entity).unwrap();
 
     let parent_transform = q_transform.get(parent_entity).unwrap();
 
-    let camera_transform =  q_transform.get(camera_entity).unwrap();
+    let camera_transform = q_transform.get(camera_entity).unwrap();
 
-    
     let axis_1 = Vec3::from(gismo_transform.up());
 
     let direction_plane = gismo_transform.up();
@@ -285,40 +286,43 @@ pub fn transform_rotation(
     };
 
     // Calculate if and where the ray is hitting the Handle  plane.
-    let Some(distance) =
-        ray.intersect_plane(gismo_transform.translation(), InfinitePlane3d::new(direction_plane))
-    else {
+    let Some(distance) = ray.intersect_plane(
+        gismo_transform.translation(),
+        InfinitePlane3d::new(direction_plane),
+    ) else {
         return;
     };
-    
+
     let point = ray.get_point(distance);
 
     // Get the Point before the Drag
-    let Ok(ray_delta) = camera.viewport_to_world(camera_transform, cursor_position - drag.delta) else {
+    let Ok(ray_delta) = camera.viewport_to_world(camera_transform, cursor_position - drag.delta)
+    else {
         return;
     };
 
     // Calculate if and where the ray is hitting the Handle  plane.
-    let Some(distance_delta) =
-    ray_delta.intersect_plane(gismo_transform.translation(), InfinitePlane3d::new(direction_plane))
-    else {
+    let Some(distance_delta) = ray_delta.intersect_plane(
+        gismo_transform.translation(),
+        InfinitePlane3d::new(direction_plane),
+    ) else {
         return;
     };
     let point_delta = ray_delta.get_point(distance_delta);
-    
+
     // Calculate the drag in the correct direction
-    let delta_vector = point-point_delta;
+    let delta_vector = point - point_delta;
     // Calculate the Effect of the mouse movement in the dirc of the Handle
     let origin = gismo_transform.translation();
     let origin_dir = gismo_transform.back();
-    
-    let dir1 = (point-origin).normalize();
-    let dir2 = (point_delta-origin).normalize();
+
+    let dir1 = (point - origin).normalize();
+    let dir2 = (point_delta - origin).normalize();
 
     let angle_side = origin_dir.angle_between(dir1);
     let angle_side_2 = origin_dir.angle_between(dir2);
 
-    let angle_diff = angle_side-angle_side_2;
+    let angle_diff = angle_side - angle_side_2;
 
     // Set the transforamtion
     let mut parent_transform_local = q_local_transform.get_mut(parent_entity).unwrap();

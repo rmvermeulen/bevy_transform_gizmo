@@ -1,28 +1,22 @@
-
-use bevy::{
-    prelude::*,
-    color::palettes::tailwind::*,
-    picking::*,
-    window::*
-};
+use bevy::prelude::*;
 
 use crate::*;
 
 pub fn transform_gizmo_picking(
-    mut ray_cast: MeshRayCast, 
+    mut ray_cast: MeshRayCast,
     windows: Single<&Window>,
-    q_camera: Single<(Entity, &Camera), With <GizmoPickSource>>,
-    q_transform: Query<&GlobalTransform>,  
+    q_camera: Single<(Entity, &Camera), With<GizmoPickSource>>,
+    q_transform: Query<&GlobalTransform>,
     mouse_input: Res<ButtonInput<MouseButton>>,
     mut materials_3d: Query<&mut MeshMaterial3d<StandardMaterial>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     mut gizmo_ressource: ResMut<TransformGizmoRessource>,
-    mut q_gizmo: Single<&mut Transform, With <TransformGizmo>>,
-    mut q_tagged: Query<(), (With <GizmoTransformable>) >,  
-    mut q_gizmo_parts: Query<(), (Without <TransformGizmoPart>) >,  
+    mut q_gizmo: Single<&mut Transform, With<TransformGizmo>>,
+    q_tagged: Query<(), With<GizmoTransformable>>,
+    q_gizmo_parts: Query<(), Without<TransformGizmoPart>>,
 ) {
     let (camera_entity, camera) = *q_camera;
-    let camera_transform =  q_transform.get(camera_entity).unwrap();
+    let camera_transform = q_transform.get(camera_entity).unwrap();
     let Some(cursor_position) = windows.cursor_position() else {
         return;
     };
@@ -31,8 +25,7 @@ pub fn transform_gizmo_picking(
     let Ok(ray) = camera.viewport_to_world(camera_transform, cursor_position) else {
         return;
     };
-    
- 
+
     let filter_gizmo_parts = |entity| q_gizmo_parts.contains(entity);
 
     let filter = |entity| q_tagged.contains(entity);
@@ -47,10 +40,9 @@ pub fn transform_gizmo_picking(
         .with_filter(&filter_gizmo_parts)
         .with_early_exit_test(&early_exit_test)
         .with_visibility(visibility);
-    
+
     // Allow only tagged Components to be found;
     if gizmo_ressource.use_tag_filter {
-       
         settings = settings.with_filter(&filter);
     }
 
@@ -58,21 +50,18 @@ pub fn transform_gizmo_picking(
         return;
     };
 
-    if mouse_input.just_released(gizmo_ressource.selection_button){
-
+    if mouse_input.just_released(gizmo_ressource.selection_button) {
         if let Some(last_selection) = gizmo_ressource.entity {
             // Reset Last Selection
-            
+
             let mut material = materials_3d.get_mut(last_selection).unwrap();
             material.0 = gizmo_ressource.original_color.clone().unwrap();
-  
+
             gizmo_ressource.origin = None;
             gizmo_ressource.entity = None;
             gizmo_ressource.original_color = None;
         }
-        
 
-        
         let mut material = materials_3d.get_mut(*hit_entity).unwrap();
         // Store the active Entity
 
@@ -85,10 +74,8 @@ pub fn transform_gizmo_picking(
 
         // Attach the TransformGizmo to it
         let sel_tranform = q_transform.get(*hit_entity).unwrap().clone();
-                
-        **q_gizmo =  Transform::from_translation(sel_tranform.translation()).with_rotation(sel_tranform.rotation());
 
-
-
+        **q_gizmo = Transform::from_translation(sel_tranform.translation())
+            .with_rotation(sel_tranform.rotation());
     }
 }
