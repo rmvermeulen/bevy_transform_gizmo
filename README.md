@@ -2,8 +2,10 @@
 >
 > > Fork for Bevy 0.15 using the Bevy Picking
 > > This fork is a very rough update of the plugin to be compatible with Bevy 0.15 and the new [Bevy Picking](https://docs.rs/bevy/latest/bevy/picking/index.html)
-> > Fork for Bevy 0.16
-> > It is more or less a Tech Demo.
+>
+> Fork for Bevy 0.16
+
+It is more or less a Tech Demo.
 
 <div align="center">
 
