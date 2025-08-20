@@ -6,11 +6,11 @@ use crate::*;
 pub fn transform_axis(
     drag: Trigger<Pointer<Drag>>,
     q_parents: Query<&Parent>,
-    q_transform: Query<&mut GlobalTransform>,
+    q_transform: Query<&GlobalTransform>,
     mut q_local_transform: Query<&mut Transform>,
     windows: Single<&Window>,
     q_camera: Single<(Entity, &Camera), With<GizmoPickSource>>,
-    selection: Res<TransformGizmoRessource>,
+    selection: Res<TransformGizmoResource>,
 ) {
     // Check if the correct Mouse Button is pressed
     if drag.button != selection.drag_button {
@@ -23,8 +23,6 @@ pub fn transform_axis(
     let parent_entity = q_parents.get(handle_entity).unwrap().get();
 
     let gismo_transform = q_transform.get(handle_entity).unwrap();
-
-    let parent_transform = q_transform.get(parent_entity).unwrap();
 
     let camera_transform = q_transform.get(camera_entity).unwrap();
 
@@ -40,7 +38,7 @@ pub fn transform_axis(
         return;
     };
 
-    // Calculate if and where the ray is hitting the Handle  plane.
+    // Calculate if and where the ray is hitting the Handle plane.
     let Some(distance) = ray.intersect_plane(
         gismo_transform.translation(),
         InfinitePlane3d::new(direction_plane),
@@ -56,7 +54,7 @@ pub fn transform_axis(
         return;
     };
 
-    // Calculate if and where the ray is hitting the Handle  plane.
+    // Calculate if and where the ray is hitting the Handle plane.
     let Some(distance_delta) = ray_delta.intersect_plane(
         gismo_transform.translation(),
         InfinitePlane3d::new(direction_plane),
@@ -70,7 +68,7 @@ pub fn transform_axis(
     // Calculate the Effect of the mouse movement in the direction of the Handle
     let result = delta_vector.project_onto(*direction);
 
-    // Set the transforamtion
+    // Set the transformation
     let mut parent_transform_local = q_local_transform.get_mut(parent_entity).unwrap();
     parent_transform_local.translation += result;
 
@@ -85,11 +83,11 @@ pub fn transform_axis(
 pub fn transform_plane(
     drag: Trigger<Pointer<Drag>>,
     q_parents: Query<&Parent>,
-    q_transform: Query<&mut GlobalTransform>,
+    q_transform: Query<&GlobalTransform>,
     mut q_local_transform: Query<&mut Transform>,
     windows: Single<&Window>,
     q_camera: Single<(Entity, &Camera), With<GizmoPickSource>>,
-    selection: Res<TransformGizmoRessource>,
+    selection: Res<TransformGizmoResource>,
 ) {
     // Check if the correct Mouse Button is pressed
     if drag.button != selection.drag_button {
@@ -103,8 +101,6 @@ pub fn transform_plane(
     let parent_entity = q_parents.get(handle_entity).unwrap().get();
 
     let gismo_transform = q_transform.get(handle_entity).unwrap();
-
-    let parent_transform = q_transform.get(parent_entity).unwrap();
 
     let camera_transform = q_transform.get(camera_entity).unwrap();
 
@@ -122,7 +118,7 @@ pub fn transform_plane(
         return;
     };
 
-    // Calculate if and where the ray is hitting the Handle  plane.
+    // Calculate if and where the ray is hitting the Handle plane.
     let Some(distance) = ray.intersect_plane(
         gismo_transform.translation(),
         InfinitePlane3d::new(direction_plane),
@@ -138,7 +134,7 @@ pub fn transform_plane(
         return;
     };
 
-    // Calculate if and where the ray is hitting the Handle  plane.
+    // Calculate if and where the ray is hitting the Handle plane.
     let Some(distance_delta) = ray_delta.intersect_plane(
         gismo_transform.translation(),
         InfinitePlane3d::new(direction_plane),
@@ -152,7 +148,7 @@ pub fn transform_plane(
     // Calculate the Effect of the mouse movement in the direction of the Handle
     let result = delta_vector.project_onto(axis_1) + delta_vector.project_onto(axis_2);
 
-    // Set the transforamtion
+    // Set the transformation
     let mut parent_transform_local = q_local_transform.get_mut(parent_entity).unwrap();
     parent_transform_local.translation += result;
 
@@ -167,11 +163,11 @@ pub fn transform_plane(
 pub fn transform_camera_plane(
     drag: Trigger<Pointer<Drag>>,
     q_parents: Query<&Parent>,
-    q_transform: Query<&mut GlobalTransform>,
+    q_transform: Query<&GlobalTransform>,
     mut q_local_transform: Query<&mut Transform>,
     windows: Single<&Window>,
     q_camera: Single<(Entity, &Camera), With<GizmoPickSource>>,
-    selection: Res<TransformGizmoRessource>,
+    selection: Res<TransformGizmoResource>,
 ) {
     // Check if the correct Mouse Button is pressed
     if drag.button != selection.drag_button {
@@ -185,8 +181,6 @@ pub fn transform_camera_plane(
 
     let gismo_transform = q_transform.get(handle_entity).unwrap();
 
-    let parent_transform = q_transform.get(parent_entity).unwrap();
-
     let camera_transform = q_transform.get(camera_entity).unwrap();
 
     let Some(cursor_position) = windows.cursor_position() else {
@@ -199,7 +193,7 @@ pub fn transform_camera_plane(
     };
 
     let direction_plane = camera_transform.back();
-    // Calculate if and where the ray is hitting the Handle  plane.
+    // Calculate if and where the ray is hitting the Handle plane.
     let Some(distance) = ray.intersect_plane(
         gismo_transform.translation(),
         InfinitePlane3d::new(direction_plane),
@@ -215,7 +209,7 @@ pub fn transform_camera_plane(
         return;
     };
 
-    // Calculate if and where the ray is hitting the Handle  plane.
+    // Calculate if and where the ray is hitting the Handle plane.
     let Some(distance_delta) = ray_delta.intersect_plane(
         gismo_transform.translation(),
         InfinitePlane3d::new(direction_plane),
@@ -234,7 +228,7 @@ pub fn transform_camera_plane(
     // Calculate the Effect of the mouse movement in the direction of the Handle
     let result = delta_vector.project_onto(axis_1) + delta_vector.project_onto(axis_2);
 
-    // Set the transforamtion
+    // Set the transformation
     let mut parent_transform_local = q_local_transform.get_mut(parent_entity).unwrap();
     parent_transform_local.translation += result;
 
@@ -249,11 +243,11 @@ pub fn transform_camera_plane(
 pub fn transform_rotation(
     drag: Trigger<Pointer<Drag>>,
     q_parents: Query<&Parent>,
-    q_transform: Query<&mut GlobalTransform>,
+    q_transform: Query<&GlobalTransform>,
     mut q_local_transform: Query<&mut Transform>,
     windows: Single<&Window>,
     q_camera: Single<(Entity, &Camera), With<GizmoPickSource>>,
-    selection: Res<TransformGizmoRessource>,
+    selection: Res<TransformGizmoResource>,
 ) {
     // Check if the correct Mouse Button is pressed
     if drag.button != selection.drag_button {
@@ -267,8 +261,6 @@ pub fn transform_rotation(
     let parent_entity = q_parents.get(handle_entity).unwrap().get();
 
     let gismo_transform = q_transform.get(handle_entity).unwrap();
-
-    let parent_transform = q_transform.get(parent_entity).unwrap();
 
     let camera_transform = q_transform.get(camera_entity).unwrap();
 
@@ -285,7 +277,7 @@ pub fn transform_rotation(
         return;
     };
 
-    // Calculate if and where the ray is hitting the Handle  plane.
+    // Calculate if and where the ray is hitting the Handle plane.
     let Some(distance) = ray.intersect_plane(
         gismo_transform.translation(),
         InfinitePlane3d::new(direction_plane),
@@ -301,7 +293,7 @@ pub fn transform_rotation(
         return;
     };
 
-    // Calculate if and where the ray is hitting the Handle  plane.
+    // Calculate if and where the ray is hitting the Handle plane.
     let Some(distance_delta) = ray_delta.intersect_plane(
         gismo_transform.translation(),
         InfinitePlane3d::new(direction_plane),
@@ -311,8 +303,7 @@ pub fn transform_rotation(
     let point_delta = ray_delta.get_point(distance_delta);
 
     // Calculate the drag in the correct direction
-    let delta_vector = point - point_delta;
-    // Calculate the Effect of the mouse movement in the dirc of the Handle
+    // Calculate the Effect of the mouse movement in the direction of the Handle
     let origin = gismo_transform.translation();
     let origin_dir = gismo_transform.back();
 
@@ -324,7 +315,7 @@ pub fn transform_rotation(
 
     let angle_diff = angle_side - angle_side_2;
 
-    // Set the transforamtion
+    // Set the transformation
     let mut parent_transform_local = q_local_transform.get_mut(parent_entity).unwrap();
     parent_transform_local.rotate(Quat::from_axis_angle(axis_1, angle_diff));
 

@@ -30,11 +30,7 @@ fn setup(
     commands.spawn((
         Mesh3d(meshes.add(Plane3d::default().mesh().size(10.0, 10.0))),
         MeshMaterial3d(materials.add(Color::srgb(0.3, 0.5, 0.3))),
-        // bevy_transform_gizmo::GizmoTransformable, // Not Mandatory because of  "use_tag_filter= false"
     ));
-
-    let tan = Color::srgb_u8(204, 178, 153);
-    let red = Color::srgb_u8(127, 26, 26);
 
     // cube
     commands
@@ -48,27 +44,20 @@ fn setup(
                 Mesh3d(meshes.add(Cuboid::from_size(Vec3::splat(1.0)))),
                 MeshMaterial3d(materials.add(Color::srgb(0.8, 0.8, 0.8))),
                 Transform::from_xyz(1.0, 0.0, 0.0),
-                // bevy_transform_gizmo::GizmoTransformable, // Not Mandatory because of  "use_tag_filter= false"
             ));
             commands.spawn((
                 Mesh3d(meshes.add(Cuboid::from_size(Vec3::splat(1.0)))),
                 MeshMaterial3d(materials.add(Color::srgb(1.0, 1.0, 1.0))),
                 Transform::from_xyz(1.0, 1.0, 0.0),
-                // bevy_transform_gizmo::GizmoTransformable, // Not Mandatory because of  "use_tag_filter= false"
             ));
         });
 
     // light
-    commands.spawn(PointLightBundle {
-        transform: Transform::from_xyz(4.0, 8.0, 4.0),
-        ..Default::default()
-    });
+    commands.spawn((PointLight::default(), Transform::from_xyz(4.0, 8.0, 4.0)));
     // camera
     commands.spawn((
-        Camera3dBundle {
-            transform: Transform::from_xyz(2.0, 2.5, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
-            ..Default::default()
-        },
+        Camera3d::default(),
+        Transform::from_xyz(2.0, 2.5, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
         bevy_transform_gizmo::GizmoPickSource,
     ));
 }

@@ -17,7 +17,7 @@ use gizmo_component::*;
 pub mod normalization;
 use crate::normalization::*;
 
-#[derive(Component, Default, Clone, Debug)]
+#[derive(Clone, Component, Debug, Default)]
 pub struct InternalGizmoCamera;
 
 #[derive(Component)]
@@ -33,7 +33,7 @@ pub struct GizmoTransformable;
 pub struct TransformGizmoPart;
 
 #[derive(Resource)]
-pub struct TransformGizmoRessource {
+pub struct TransformGizmoResource {
     pub entity: Option<Entity>,
     pub original_color: Option<Handle<StandardMaterial>>,
     pub origin: Option<GlobalTransform>,
@@ -43,14 +43,14 @@ pub struct TransformGizmoRessource {
     pub drag_button: PointerButton,
 }
 
-impl Default for TransformGizmoRessource {
+impl Default for TransformGizmoResource {
     fn default() -> Self {
         Self {
             entity: None,
             original_color: None,
             origin: None,
             use_tag_filter: true,
-            selection_color: Color::from(YELLOW_300).clone(),
+            selection_color: Color::from(YELLOW_300),
             selection_button: MouseButton::Left,
             drag_button: PointerButton::Primary,
         }
@@ -68,7 +68,7 @@ impl Default for TransformGizmoPlugin {
     fn default() -> Self {
         Self {
             use_tag_filter: false,
-            selection_color: Color::from(YELLOW_300).clone(),
+            selection_color: Color::from(YELLOW_300),
             selection_button: MouseButton::Left,
             drag_button: PointerButton::Primary,
         }
@@ -84,7 +84,7 @@ impl Plugin for TransformGizmoPlugin {
             Shader::from_wgsl
         );
 
-        let resource = TransformGizmoRessource {
+        let resource = TransformGizmoResource {
             use_tag_filter: self.use_tag_filter,
             selection_color: self.selection_color,
             selection_button: self.selection_button,
@@ -97,12 +97,18 @@ impl Plugin for TransformGizmoPlugin {
         app.add_plugins(MaterialPlugin::<GizmoMaterial>::default());
 
         app.add_systems(PostStartup, build_gizmo);
-        app.add_systems(Update, transform_gizmo_picking);
+        app.add_systems(
+            Update,
+            transform_gizmo_picking_1
+                .pipe(transform_gizmo_picking_2)
+                .pipe(transform_gizmo_picking_3),
+        );
         app.add_systems(PostUpdate, normalize);
         app.add_systems(PostUpdate, gizmo_cam_copy_settings);
     }
 }
 
+#[allow(clippy::type_complexity)]
 fn gizmo_cam_copy_settings(
     main_cam: Query<(Ref<Camera>, Ref<GlobalTransform>, Ref<Projection>), With<GizmoPickSource>>,
     mut gizmo_cam: Query<
